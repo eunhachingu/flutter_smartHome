@@ -1,9 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:smart_home/util/smart_device_box.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:smart_home/util/smart_button.dart';
 
 class HomeApp extends StatefulWidget {
   const HomeApp({super.key});
@@ -13,107 +12,108 @@ class HomeApp extends StatefulWidget {
 }
 
 class _HomeAppState extends State<HomeApp> {
-  List mySmartDevices = [
-    // [ smartDeviceName, iconPath, powerStatus]
-    ["Smart Light", const Icon(Icons.light), true],
-    ["Smart AC", const Icon(Icons.ac_unit), false],
-    ["Smart TV", const Icon(Icons.tv), true],
-    ["Smart Fan", const Icon(Icons.mode_fan_off), false],
-  ];
-
-  void powerSwitchChanged(bool value, int index) {
+  void isPower(bool value, int index) {
     setState(() {
-      mySmartDevices[index][2] = value;
+      mySmartButtons[index][2] = value;
     });
   }
 
+  List mySmartButtons = [
+    // [smartText, smartIcon, isSwitch]
+    ["Smart Light", const Icon(Icons.light), false],
+    ["Smart AC", const Icon(Icons.ac_unit), true],
+    ["Smart TV", const Icon(Icons.tv), false],
+    ["Smart Fan", const Icon(Icons.mode_fan_off_sharp), true],
+  ];
+
+  double horizontalPadding = 40.0;
+  double verticalPadding = 25.0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
+        body: SafeArea(
+      child: Container(
+        color: Colors.grey[500],
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // nav
             Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 45.0, vertical: 20.0),
+              padding: EdgeInsets.symmetric(
+                  horizontal: horizontalPadding, vertical: verticalPadding),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  //icon
                   const Icon(
-                    Icons.logo_dev_outlined,
+                    Icons.abc_sharp,
                     size: 45,
                   ),
-                  // profile
-                  const Icon(
-                    Icons.people,
-                    size: 45,
-                  )
+                  const Icon(Icons.ac_unit_rounded, size: 45),
                 ],
               ),
             ),
-
             // hero
-            Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 40.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Welcome Home,",
-                      style: GoogleFonts.bebasNeue(
-                        fontSize: 32,
-                      ),
-                    ),
-                    Text("CHOI NAV",
-                        style: GoogleFonts.bebasNeue(
-                          fontSize: 72,
-                        ))
-                  ],
-                )),
 
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 40.0),
+              padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "WELCOME HOME,",
+                    style: GoogleFonts.oswald(),
+                  ),
+                  Text(
+                    "CHOI NAV",
+                    style: GoogleFonts.oswald(
+                      fontSize: 40,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
               child: Divider(
-                color: Colors.grey[400],
+                color: Colors.grey[500],
                 thickness: 1,
               ),
             ),
 
             // body
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 40.0),
+              padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+              // ignore: prefer_const_literals_to_create_immutables
               child: Text(
-                "Smart Devices",
-                style: GoogleFonts.bebasNeue(
-                  fontSize: 20,
-                ),
+                "SMART DEVICES",
+                style: GoogleFonts.oswald(fontSize: 20),
               ),
             ),
+
             Expanded(
               child: GridView.builder(
-                itemCount: mySmartDevices.length,
-                physics: const NeverScrollableScrollPhysics(),
-                padding: const EdgeInsets.all(25.0),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  childAspectRatio: 1,
-                  crossAxisCount: 2,
-                ),
-                itemBuilder: ((context, index) {
-                  return SmartDeviceBox(
-                    smartDeviceName: mySmartDevices[index][0],
-                    iconPath: mySmartDevices[index][1],
-                    powerOn: mySmartDevices[index][2],
-                    onChanged: (value) => powerSwitchChanged(value, index),
-                  );
-                }),
-              ),
-            )
+                  itemCount: mySmartButtons.length,
+                  physics: NeverScrollableScrollPhysics(),
+                  padding: EdgeInsets.all(10.0),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2),
+                  itemBuilder: ((context, index) {
+                    return SmartButton(
+                      textSmart: mySmartButtons[index][0],
+                      iconPath: mySmartButtons[index][1],
+                      powerOn: mySmartButtons[index][2],
+                      onChanged: (value) => isPower(value, index),
+                    );
+                  })),
+            ),
           ],
         ),
       ),
-    );
+    ));
   }
 }
